@@ -1,0 +1,6 @@
+
+Model name:          eer_64_mfcc
+Feature type:        mfcc
+Feature delta:       True
+Distribution number: 64
+Thread number:       16

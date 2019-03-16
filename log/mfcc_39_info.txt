@@ -1,0 +1,6 @@
+
+Model name:          mfcc_39
+Feature type:        mfcc
+Feature delta:       True
+Distribution number: 512
+Thread number:       16

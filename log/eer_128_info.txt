@@ -1,0 +1,6 @@
+
+Model name:          eer_128
+Feature type:        mfcc
+Feature delta:       True
+Distribution number: 128
+Thread number:       8

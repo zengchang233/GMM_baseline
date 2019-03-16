@@ -1,0 +1,6 @@
+
+Model name:          eer_256_mfcc
+Feature type:        mfcc
+Feature delta:       True
+Distribution number: 256
+Thread number:       16
