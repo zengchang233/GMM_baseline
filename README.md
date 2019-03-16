@@ -9,6 +9,7 @@ numpy
 pandas
 matplotlib
 scipy
+tqdm
 ```
 
 ## 主要脚本
