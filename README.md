@@ -1,5 +1,5 @@
 # GMM_baseline
-未来杯语音赛道说话人识别的baseline，用的是传统的UBM-GMM模型。
+[未来杯语音赛道说话人识别](https://ai.futurelab.tv/contest_detail/2)的baseline，用的是传统的UBM-GMM模型。
 
 ## 依赖项
 ```
@@ -59,7 +59,7 @@ optional arguments:
 ```
 
 ## 说明
-这个项目是打算作为本次比赛的baseline。
+这个项目是打算作为本次比赛的baseline。训练的语音是比赛官方提供的aishell2的子集，包含了100人的语音，开发集也是官方提供的数据。
 本次比赛需要验证不同信道的说话人的语音，UBM-GMM对于这种条件适应性较差，当然如果用ZT-norm重新整理得分的话效果应该更好，但是总的来说注册语音的信道和测试信道不匹配的问题还是很严重。
 这种条件下，我相信i-vector+PLDA是一个更好的选择来解决这个问题。
 
