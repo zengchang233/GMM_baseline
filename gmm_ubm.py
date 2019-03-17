@@ -1,5 +1,4 @@
 #! /usr/bin/python3
-#2018-09-04 12:17:03 
 
 import sidekit
 import os
