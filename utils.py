@@ -4,6 +4,7 @@ import warnings
 import sidekit
 import tqdm
 import argparse
+import matplotlib.pyplot as plt
 warnings.filterwarnings('ignore')
 
 def get_args():
@@ -142,26 +143,17 @@ def score(score):
     np.savetxt("result/results.txt", results)
     return results
 
-def save_result(result, path):
+def show_result(results):
     '''
+    show the score which is calculated according to the rule of competition
     param:
-        predict_mat : predict value of model
-        path        : save file path
-    return:
-        None
+        results : score vector or the path of file which store the score vector.
     '''
-    predict_mat = score.score_mat
-    columns = ['FileID','IsMember']
-    result = []
-    for i in predict_mat:
-        if 1 in i:
-            result.append('Y')
-        else:
-            result.append('N')
-    result = np.asarray(result)
-    result = score.segset.hstack(result)
-    result = pd.DataFrame(result, columns = columns)
-    result.to_csv(path)
+    if type(results) == str:
+        results = np.loadtxt(results)
+    
+    plt.plot(results)
+    plt.show()
 
 def main():
     args = get_args()
@@ -172,7 +164,8 @@ def main():
     if args.test:
         trial_test(args.test)
     if args.score:
-        score(args.score)
+        results = score(args.score)
+        show_result(results)
 
 if __name__ == '__main__':
     main()
