@@ -67,4 +67,4 @@ optional arguments:
 如果这个repository对你有帮助麻烦请star:-D。
 
 ## 联系
-Email : [zengchang.elec@gmail.com](zengchang.elec@gmail.com)
+Email : <zengchang.elec@gmail.com>
