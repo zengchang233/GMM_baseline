@@ -18,6 +18,7 @@ def get_parser():
     
     parser.add_argument('--feat_type',
                          type = str,
+                         choices = ['mfcc','fb'],
                          default = 'mfcc',
                          help = 'feature type'
     )
@@ -30,12 +31,12 @@ def get_parser():
     parser.add_argument('--distribNum',
                          type = int,
                          default = 512,
-                         help = 'distribution number'
+                         help = 'distribution number (default : 512)'
     )
     parser.add_argument('--num_thread',
                          type = int,
                          default = 20,
-                         help = 'threads number'
+                         help = 'threads number (default : 20)'
     )
     parser.add_argument('--extract', 
                          action = 'store_true',
