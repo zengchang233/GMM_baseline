@@ -24,7 +24,7 @@ tqdm
 
 Ps：最新版的`sidekit`，也就是`1.3.1`我没有测试过，可能有`bug`，因为我使用`1.2.9`版本的时候发现过`bug`，后来回退到了稳定的`1.2.2`版本。
 
-另外，`sidekit`包还提供了生成`DET Curve`的方法，但是可能会失败，具体原因我也没有找到，总之如果大家经过上面的修改之后还是不能导入`sidekit`的话，请修改`bosaris`文件夹里面的`detplot.py`的第39行，`matplotlib.use('PDF')`, 可以改成`matplotlib.use('Qt5Agg')`。
+另外，`sidekit`包还提供了生成`DET Curve`的方法，但是可能会失败，具体原因我也没有找到。总之如果大家经过上面的修改之后还是不能导入`sidekit`的话，请修改`bosaris`文件夹里面的`detplot.py`的第39行，`matplotlib.use('PDF')`, 可以改成`matplotlib.use('Qt5Agg')`。
 
 ## 主要脚本
 `gmm_ubm.py`这个脚本包含了训练ubm，自适应得到注册人的gmm，以及计算注册的gmm对所有攻击语音的打分的函数。脚本的用法如下。
