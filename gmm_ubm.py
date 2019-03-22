@@ -20,7 +20,7 @@ def get_parser():
                          type = str,
                          choices = ['mfcc','fb'],
                          default = 'mfcc',
-                         help = 'feature type'
+                         help = 'feature type (default : "mfcc")'
     )
     
     parser.add_argument('--delta',
