@@ -2,8 +2,11 @@
 [未来杯语音赛道说话人识别](https://ai.futurelab.tv/contest_detail/2)的baseline，用的是传统的UBM-GMM模型。
 
 ## 依赖项
+`python`版本推荐`3.7.2`
+
+相关的库`pip install -r requirements.txt`
+
 ```
-python==3.7.2
 sidekit==1.2.2
 numpy
 pandas
