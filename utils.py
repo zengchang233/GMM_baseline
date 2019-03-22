@@ -4,6 +4,7 @@ import warnings
 import sidekit
 import tqdm
 import argparse
+import os
 import matplotlib.pyplot as plt
 warnings.filterwarnings('ignore')
 
@@ -27,6 +28,42 @@ def get_args():
                         help = 'calculate the score')
     args = parser.parse_args()
     return args                                                   
+
+def remove(path):
+    '''
+    remove the h5 file which cannot be read
+    param:
+        path : trainset feature path
+    '''
+    server = sidekit.FeaturesServer(features_extractor=None,
+                                    feature_filename_structure=path+"/{}.h5",
+                                    sources=None,
+                                    dataset_list=["fb", "vad"],
+                                    mask=None,
+                                    feat_norm="cmvn",
+                                    global_cmvn=None,
+                                    dct_pca=False,
+                                    dct_pca_config=None,
+                                    sdc=False,
+                                    sdc_config=None,
+                                    delta=False,
+                                    double_delta=False,
+                                    delta_filter=None,
+                                    context=None,
+                                    traps_dct_nb=None,
+                                    rasta=True,
+                                    keep_all_features=False)
+    speaker = os.listdir(path)
+    for s in speaker:
+        speaker_path = os.path.join(path, s)
+        speech = os.listdir(speaker_path)
+        for sph in speech:
+            speech_path = s + '/' + sph.split('.')[0]
+            try:
+                feature,_ = server.load(speech_path,0)
+            except:
+                os.remove(os.path.join(speaker_path, sph))
+    print('done')
 
 def enroll(path):
     '''
