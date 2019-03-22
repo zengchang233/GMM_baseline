@@ -12,6 +12,15 @@ scipy
 tqdm
 ```
 
+### 注意
+如果`sidekit`安装了之后无法`import`，需要找到`sidekit`安装的地方，改一下`__init__.py`文件，这个文件里面的38到42行，如果你只训练gmm-ubm的话，所有的选项都设置为`False`。
+
+如果你想使用`svm`，请先安装`libsvm`库，然后把`__init__.py`里面的相应选项设置为`True`。
+
+最新版的`sidekit`，神经网络部分已经换成了`Pytorch`的backend，但是`1.2.2`还是`Theano`，如果你想在`sidekit`里面使用神经网络，请安装最新版。
+
+Ps：最新版的`sidekit`，也就是`1.3.1`我没有测试过，可能有`bug`，因为我使用`1.2.9`版本的时候发现过`bug`，后来回退到了稳定的`1.2.2`版本。
+
 ## 主要脚本
 `gmm_ubm.py`这个脚本包含了训练ubm，自适应得到注册人的gmm，以及计算注册的gmm对所有攻击语音的打分的函数。脚本的用法如下。
 测试了512 mixture的GMM分别对于64-dim的fbank和13+delta+double delta的mfcc的拟合，发现mfcc的效果相对较好，但是根据比赛的评分规则，最好也只有0.74。
