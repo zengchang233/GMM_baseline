@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import argparse
 import warnings
+import utils
 warnings.filterwarnings('ignore')
 
 def get_parser():
@@ -138,7 +139,9 @@ def train_ubm(**args):
         datasetlist = ["fb", "vad"]
         mask = None
         features_folder = '/home/zeng/zeng/aishell/aishell2/ios/data/feature'
-        
+    
+    utils.remove(features_folder)
+    
     ubmlist = []
     if os.path.exists(os.getcwd() + '/log/aishell2_wavlist.log'):
         with open(os.getcwd() + '/log/aishell2_wavlist.log','r') as fobj:
