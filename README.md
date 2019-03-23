@@ -20,7 +20,7 @@ tqdm
 ### 注意
 如果`sidekit`安装了之后无法`import`，需要找到`sidekit`安装的地方，改一下`__init__.py`文件，这个文件里面的38到42行，如果你只训练`gmm-ubm`的话，所有的选项都设置为`False`。
 
-如果你想使用`svm`，请先安装`libsvm`库，然后把`__init__.py`里面的相应选项设置为`True`。
+如果你想使用`svm`，请先安装`libsvm`库，然后把`__init__.py`里面的相应选项设置为`True`，最后在`sidekit`的`libsvm`文件夹里面新建一个链接指向`svm`库的`libsvm.so.2`。
 
 最新版的`sidekit`，神经网络部分已经换成了`Pytorch`的`backend`，但是`1.2.2`还是`Theano`，如果你想在`sidekit`里面使用神经网络，请安装最新版。
 
