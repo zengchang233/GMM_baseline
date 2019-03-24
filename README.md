@@ -50,8 +50,7 @@ Ps：最新版的`sidekit`，也就是`1.3.1`我没有测试过，可能有`bug`
 `gmm_ubm.py`这个脚本包含了训练ubm，自适应得到注册人的gmm，以及计算注册的gmm对所有攻击语音的打分的函数。脚本的用法如下。
 测试了512 mixture的GMM分别对于64-dim的fbank和13+delta+double delta的mfcc的拟合，发现mfcc的效果相对较好，但是根据比赛的评分规则，最好也只有0.74。
 ```
-python gmm_ubm.py -h
-usage: gmm_ubm.py [-h] [--feat_type FEAT_TYPE] [--delta]
+usage: gmm_ubm.py [-h] [--feat_type {mfcc,fb,plp}] [--delta]
                   [--distribNum DISTRIBNUM] [--num_thread NUM_THREAD]
                   [--extract] [--train] [--adaptation] [--score]
                   name
@@ -63,17 +62,17 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  --feat_type FEAT_TYPE
-                        feature type
+  --feat_type {mfcc,fb,plp}
+                        feature type (default : "plp")
   --delta               using delta information of feature
   --distribNum DISTRIBNUM
-                        distribution number
+                        distribution number (default : 512)
   --num_thread NUM_THREAD
-                        threads number
+                        threads number (default : 20)
   --extract             extract feature from audio
   --train               train the ubm model
   --adaptation          adaptation for speaker model
-  --score               compute the score
+  --score               compute the eer
 ```
 
 `utils.py`这个脚本包含了一些文件的预处理例如idmap，ndx和key，关于这些文件的详细信息，请参考sidekit的官方文档[sidekit](https://projets-lium.univ-lemans.fr/sidekit/_downloads/sidekit.pdf)。另外还包含了一个根据比赛的积分规则打分的函数，`--score`选项用来打分并将打分的结果保存在`result`文件夹里面。
