@@ -82,10 +82,10 @@ def preprocess():
     wav_dir = '/home/zeng/zeng/aishell/wav'
     speaker_list = os.listdir(wav_dir)
     wavlist = []
-    for i in speaker_list:
+    for i in random.sample(speaker_list,150): # 150 speakers
         speaker_dir_path = wav_dir + '/' + i
         speech_list = os.listdir(speaker_dir_path)
-        for j in random.sample(speech_list,150): # 150 speakers
+        for j in speech_list:
             wavlist.append(i + '/' + j.split('.')[0])
     with open(os.getcwd() + '/log/aishell2_wavlist.log', 'w') as fobj:
         for i in wavlist:
