@@ -123,7 +123,7 @@ def extract_feat(args):
                                           snr=40,
                                           pre_emphasis=0.97,
                                           save_param=["vad", "energy", "cep", "fb"],
-                                          feature_type=args.feat_type,
+                                          feature_type='plp' if args.feat_type == 'fb' else args.feat_type,
                                           rasta_plp=True,
                                           keep_all_features=True)
     
