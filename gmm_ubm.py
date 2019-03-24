@@ -8,6 +8,7 @@ import pandas as pd
 import argparse
 import warnings
 import utils
+import random
 warnings.filterwarnings('ignore')
 
 def get_parser():
@@ -19,7 +20,7 @@ def get_parser():
     
     parser.add_argument('--feat_type',
                          type = str,
-                         choices = ['mfcc','fb'],
+                         choices = ['mfcc','fb','plp'],
                          default = 'mfcc',
                          help = 'feature type (default : "mfcc")'
     )
@@ -78,14 +79,13 @@ def save_info(args):
             f.write(info)
 
 def preprocess():
-    wav_dir = '/home/zeng/zeng/aishell/aishell2/ios/data/wav'
-    #dev_dir = '/home/zeng/zeng/aishell/af2019-sr-devset-20190312/data'
+    wav_dir = '/home/zeng/zeng/aishell/wav'
     speaker_list = os.listdir(wav_dir)
     wavlist = []
     for i in speaker_list:
         speaker_dir_path = wav_dir + '/' + i
         speech_list = os.listdir(speaker_dir_path)
-        for j in speech_list:
+        for j in random.sample(speech_list,150): # 150 speakers
             wavlist.append(i + '/' + j.split('.')[0])
     with open(os.getcwd() + '/log/aishell2_wavlist.log', 'w') as fobj:
         for i in wavlist:
@@ -94,8 +94,8 @@ def preprocess():
 
 def extract_feat(args):
     # wav directory and feature directory
-    audio_folder = '/home/zeng/zeng/aishell/aishell2/ios/data/wav'
-    features_folder = '/home/zeng/zeng/aishell/aishell2/ios/data/feature'
+    audio_folder = '/home/zeng/zeng/aishell/wav'
+    features_folder = '/home/zeng/zeng/aishell/v1/feature'
     wavlist = []
     if os.path.exists(os.getcwd() + '/log/aishell2_wavlist.log'):
         with open(os.getcwd() + '/log/aishell2_wavlist.log','r') as fobj:
@@ -118,11 +118,13 @@ def extract_feat(args):
                                           filter_bank_size=64,
                                           window_size=0.025,
                                           shift=0.01,
-                                          ceps_number=24,
+                                          ceps_number=20,
                                           vad="snr",
                                           snr=40,
                                           pre_emphasis=0.97,
                                           save_param=["vad", "energy", "cep", "fb"],
+                                          feature_type=args.feat_type,
+                                          rasta_plp=True,
                                           keep_all_features=True)
     
     # save the feature
@@ -131,16 +133,16 @@ def extract_feat(args):
                         num_thread = args.num_thread)
     
 def train_ubm(**args):
-    if args['feat_type'] == 'mfcc':
+    if (args['feat_type'] == 'mfcc') or (args['feat_type'] == 'plp'):
         datasetlist = ["energy", "cep", "vad"]
-        mask = "[0-12]"
-        features_folder = '/home/zeng/zeng/aishell/aishell2/ios/data/feature'
+        mask = "[0-19]"
+        features_folder = '/home/zeng/zeng/aishell/v1/feature'
     if args['feat_type'] == 'fb':
         datasetlist = ["fb", "vad"]
         mask = None
-        features_folder = '/home/zeng/zeng/aishell/aishell2/ios/data/feature'
+        features_folder = '/home/zeng/zeng/aishell/v1/feature'
     
-    utils.remove(features_folder)
+    utils.remove(features_folder) # if there are some files which only have the wav format header, remove this kind of files.
     
     ubmlist = []
     if os.path.exists(os.getcwd() + '/log/aishell2_wavlist.log'):
@@ -176,14 +178,14 @@ def train_ubm(**args):
     ubm.write(os.getcwd() + '/model/ubm_512.h5')
 
 def adaptation(args):
-    if args.feat_type == 'mfcc':
+    if (args.feat_type == 'mfcc') or (args.feat_type == 'plp'):
         datasetlist = ["energy", "cep", "vad"]
-        mask = "[0-12]"
-        features_folder = '/home/zeng/zeng/aishell/af2019-sr-devset-20190312/feature'
+        mask = "[0-19]"
+        features_folder = '/home/zeng/zeng/aishell/v1/feature'
     if args.feat_type == 'fb':
         datasetlist = ["fb", "vad"]
         mask = None
-        features_folder = '/home/zeng/zeng/aishell/af2019-sr-devset-20190312/feature'
+        features_folder = '/home/zeng/zeng/aishell/v1/feature'
     
     # create feature server for loading feature from disk    
     feature_server = sidekit.FeaturesServer(features_extractor=None,
