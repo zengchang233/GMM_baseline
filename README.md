@@ -57,6 +57,9 @@ Ps：最新版的`sidekit`，也就是`1.3.1`我没有测试过，可能有`bug`
 另外，`sidekit`包还提供了生成`DET Curve`的方法，但是可能会失败，具体原因我也没有找到。总之如果大家经过上面的修改之后还是不能导入`sidekit`的话，请修改`bosaris`文件夹里面的`detplot.py`的第39行，`matplotlib.use('PDF')`, 可以改成`matplotlib.use('Qt5Agg')`。
 
 ## 主要脚本
+
+`preprocess.py`文件主要是特征提取已经路径的读取，具体用法看`run.sh`脚本。
+
 `gmm_ubm.py`这个脚本包含了训练ubm，自适应得到注册人的gmm，以及计算注册的gmm对所有攻击语音的打分的函数。脚本的用法如下。
 测试了512 mixture的GMM分别对于64-dim的fbank和13+delta+double delta的mfcc的拟合，发现mfcc的效果相对较好，但是根据比赛的评分规则，最好也只有0.74。
 ```
@@ -79,7 +82,6 @@ optional arguments:
                         distribution number (default : 512)
   --num_thread NUM_THREAD
                         threads number (default : 20)
-  --extract             extract feature from audio
   --train               train the ubm model
   --adaptation          adaptation for speaker model
   --score               compute the eer
