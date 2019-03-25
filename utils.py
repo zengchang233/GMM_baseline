@@ -4,8 +4,6 @@ import warnings
 import sidekit
 import tqdm
 import argparse
-import os
-import matplotlib.pyplot as plt
 warnings.filterwarnings('ignore')
 
 def get_args():
@@ -28,42 +26,6 @@ def get_args():
                         help = 'calculate the score')
     args = parser.parse_args()
     return args                                                   
-
-def remove(path):
-    '''
-    remove the h5 file which cannot be read
-    param:
-        path : trainset feature path
-    '''
-    server = sidekit.FeaturesServer(features_extractor=None,
-                                    feature_filename_structure=path+"/{}.h5",
-                                    sources=None,
-                                    dataset_list=["fb", "vad"],
-                                    mask=None,
-                                    feat_norm="cmvn",
-                                    global_cmvn=None,
-                                    dct_pca=False,
-                                    dct_pca_config=None,
-                                    sdc=False,
-                                    sdc_config=None,
-                                    delta=False,
-                                    double_delta=False,
-                                    delta_filter=None,
-                                    context=None,
-                                    traps_dct_nb=None,
-                                    rasta=True,
-                                    keep_all_features=False)
-    speaker = os.listdir(path)
-    for s in speaker:
-        speaker_path = os.path.join(path, s)
-        speech = os.listdir(speaker_path)
-        for sph in speech:
-            speech_path = s + '/' + sph.split('.')[0]
-            try:
-                feature,_ = server.load(speech_path,0)
-            except:
-                os.remove(os.path.join(speaker_path, sph))
-    print('done')
 
 def enroll(path):
     '''
@@ -99,7 +61,6 @@ def trial_test(path):
     enroll_models = []
     for i in range(0, len(enroll_idmap.leftids), 3):
         enroll_models.append(enroll_idmap.leftids[i])
-    print(enroll_models)
     for i in range(len(data.index)):
         for j in range(5):
             ind = data['GroupID'][i] * 5 + j
@@ -127,7 +88,6 @@ def trial_dev(path):
     enroll_models = []
     for i in range(0, len(enroll_idmap.leftids), 3):
         enroll_models.append(enroll_idmap.leftids[i])
-    print(enroll_models)
     for i in range(len(data.index)):
         for j in range(5):
             ind = data['GroupID'][i] * 5 + j
@@ -180,17 +140,26 @@ def score(score):
     np.savetxt("result/results.txt", results)
     return results
 
-def show_result(results):
+def save_result(result, path):
     '''
-    show the score which is calculated according to the rule of competition
     param:
-        results : score vector or the path of file which store the score vector.
+        predict_mat : predict value of model
+        path        : save file path
+    return:
+        None
     '''
-    if type(results) == str:
-        results = np.loadtxt(results)
-    
-    plt.plot(results)
-    plt.show()
+    predict_mat = score.score_mat
+    columns = ['FileID','IsMember']
+    result = []
+    for i in predict_mat:
+        if 1 in i:
+            result.append('Y')
+        else:
+            result.append('N')
+    result = np.asarray(result)
+    result = score.segset.hstack(result)
+    result = pd.DataFrame(result, columns = columns)
+    result.to_csv(path)
 
 def main():
     args = get_args()
@@ -201,8 +170,7 @@ def main():
     if args.test:
         trial_test(args.test)
     if args.score:
-        results = score(args.score)
-        show_result(results)
+        score(args.score)
 
 if __name__ == '__main__':
     main()

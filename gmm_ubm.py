@@ -1,4 +1,5 @@
 #! /usr/bin/python3
+#2018-09-04 12:17:03 
 
 import sidekit
 import os
@@ -7,8 +8,6 @@ import numpy as np
 import pandas as pd
 import argparse
 import warnings
-import utils
-import random
 warnings.filterwarnings('ignore')
 
 def get_parser():
@@ -20,9 +19,8 @@ def get_parser():
     
     parser.add_argument('--feat_type',
                          type = str,
-                         choices = ['mfcc','fb','plp'],
                          default = 'mfcc',
-                         help = 'feature type (default : "mfcc")'
+                         help = 'feature type'
     )
     
     parser.add_argument('--delta',
@@ -33,17 +31,13 @@ def get_parser():
     parser.add_argument('--distribNum',
                          type = int,
                          default = 512,
-                         help = 'distribution number (default : 512)'
+                         help = 'distribution number'
     )
     parser.add_argument('--num_thread',
                          type = int,
                          default = 20,
-                         help = 'threads number (default : 20)'
+                         help = 'threads number'
     )
-    parser.add_argument('--extract', 
-                         action = 'store_true',
-                         help = 'extract feature from audio')
-    
     parser.add_argument('--train',
                          action = 'store_true',
                          help = 'train the ubm model')
@@ -77,80 +71,23 @@ def save_info(args):
     else:
         with open('log/{}_info.txt'.format(args.name), 'a') as f:
             f.write(info)
-
-def preprocess():
-    wav_dir = '/home/zeng/zeng/aishell/wav'
-    speaker_list = os.listdir(wav_dir)
-    wavlist = []
-    for i in random.sample(speaker_list,150): # 150 speakers
-        speaker_dir_path = wav_dir + '/' + i
-        speech_list = os.listdir(speaker_dir_path)
-        for j in speech_list:
-            wavlist.append(i + '/' + j.split('.')[0])
-    with open(os.getcwd() + '/log/aishell2_wavlist.log', 'w') as fobj:
-        for i in wavlist:
-            fobj.write(i+'\n')
-    return wavlist
-
-def extract_feat(args):
-    # wav directory and feature directory
-    audio_folder = '/home/zeng/zeng/aishell/wav'
-    features_folder = '/home/zeng/zeng/aishell/v1/feature'
-    wavlist = []
-    if os.path.exists(os.getcwd() + '/log/aishell2_wavlist.log'):
-        with open(os.getcwd() + '/log/aishell2_wavlist.log','r') as fobj:
-            for i in fobj:
-                wavlist.append(i[0:-1])
-    else:
-        wavlist = preprocess()
-        
-    # prepare the necessary variables
-    showlist = np.asarray(wavlist)
-    channellist = np.zeros_like(showlist, dtype = int)
-        
-    # create feature extractor
-    extractor = sidekit.FeaturesExtractor(audio_filename_structure=audio_folder+'/{}.wav',
-                                          feature_filename_structure=features_folder+"/{}.h5",
-                                          sampling_frequency=16000,
-                                          lower_frequency=100.0,
-                                          higher_frequency=7000.0,
-                                          filter_bank="log",
-                                          filter_bank_size=64,
-                                          window_size=0.025,
-                                          shift=0.01,
-                                          ceps_number=20,
-                                          vad="snr",
-                                          snr=40,
-                                          pre_emphasis=0.97,
-                                          save_param=["vad", "energy", "cep", "fb"],
-                                          feature_type='plp' if args.feat_type == 'fb' else args.feat_type,
-                                          rasta_plp=True,
-                                          keep_all_features=True)
-    
-    # save the feature
-    extractor.save_list(show_list = showlist, 
-                        channel_list = channellist, 
-                        num_thread = args.num_thread)
     
 def train_ubm(**args):
     if (args['feat_type'] == 'mfcc') or (args['feat_type'] == 'plp'):
         datasetlist = ["energy", "cep", "vad"]
         mask = "[0-19]"
-        features_folder = '/home/zeng/zeng/aishell/v1/feature'
     if args['feat_type'] == 'fb':
         datasetlist = ["fb", "vad"]
         mask = None
-        features_folder = '/home/zeng/zeng/aishell/v1/feature'
-    
-    utils.remove(features_folder) # if there are some files which only have the wav format header, remove this kind of files.
-    
+    features_folder = os.getcwd() + '/{}_train_feature'.format(args['feat_type'])
+        
     ubmlist = []
-    if os.path.exists(os.getcwd() + '/log/aishell2_wavlist.log'):
-        with open(os.getcwd() + '/log/aishell2_wavlist.log','r') as fobj:
+    try:
+        with open(os.getcwd() + '/log/aishell2.log','r') as fobj:
             for i in fobj:
                 ubmlist.append(i[0:-1])
-    else:
-        ubmlist = preprocess()
+    except FileNotFoundError:
+        print('please generate ubm wav list as first')
         
     # create feature server for loading feature from disk
     server = sidekit.FeaturesServer(features_extractor=None,
@@ -178,14 +115,13 @@ def train_ubm(**args):
     ubm.write(os.getcwd() + '/model/ubm_512.h5')
 
 def adaptation(args):
-    if (args.feat_type == 'mfcc') or (args.feat_type == 'plp'):
+    if (args['feat_type'] == 'mfcc') or (args['feat_type'] == 'plp'):
         datasetlist = ["energy", "cep", "vad"]
         mask = "[0-19]"
-        features_folder = '/home/zeng/zeng/aishell/v1/feature'
-    if args.feat_type == 'fb':
+    if args['feat_type'] == 'fb':
         datasetlist = ["fb", "vad"]
         mask = None
-        features_folder = '/home/zeng/zeng/aishell/v1/feature'
+    features_folder = os.getcwd() + '/{}_test_feature'.format(args['feat_type'])
     
     # create feature server for loading feature from disk    
     feature_server = sidekit.FeaturesServer(features_extractor=None,
@@ -227,33 +163,16 @@ def adaptation(args):
     score.write(os.getcwd() + '/task/dev_score.h5')
     print('\rCompute scores done')
     
-def compute_eer(args):
-    print('Compute eer', end = '')
-    key = sidekit.Key(os.getcwd() + '/task/dev_key.h5')
-    score = sidekit.Scores(os.getcwd() + '/task/dev_score.h5')
-    print('\rCompute eer done')
-    
-    dp = sidekit.DetPlot()
-    prior = sidekit.logit_effective_prior(0.01, 1, 1)
-    dp.set_system_from_scores(score, key)
-    minDCF, _, __, ___, eer = sidekit.bosaris.detplot.fast_minDCF(dp.__tar__[0], dp.__non__[0], prior, normalize=True)
-    
-    with open('task/dev_result.txt', 'w') as f:
-        f.write('eer    :    {:7.2%}\n'.format(eer))
-        f.write('minDCF :    {:7.2%}\n'.format(minDCF))
-    return eer, minDCF
-    
 def main():
     args = get_parser()
     save_info(args)
-    if args.extract:
-        extract_feat(args)
     if args.train:
-        train_ubm(feat_type = args.feat_type, delta = args.delta, distribNum = args.distribNum, num_thread = args.num_thread)
+        train_ubm(feat_type = args.feat_type, 
+                  delta = args.delta, 
+                  distribNum = args.distribNum, 
+                  num_thread = args.num_thread)
     if args.adaptation:
         adaptation(args)
-    if args.score:
-        compute_eer(args)
 
 if __name__ == '__main__':
     main()
