@@ -137,6 +137,7 @@ def score(score):
                     correct += 1
         result = correct / len(segments)
         results.append(result)
+    print(max(result))
     np.savetxt("result/results.txt", results)
     return results
 
