@@ -115,13 +115,13 @@ def train_ubm(**args):
     ubm.write(os.getcwd() + '/model/ubm_512.h5')
 
 def adaptation(args):
-    if (args['feat_type'] == 'mfcc') or (args['feat_type'] == 'plp'):
+    if (args.feat_type == 'mfcc') or (args.feat_type == 'plp'):
         datasetlist = ["energy", "cep", "vad"]
         mask = "[0-19]"
-    if args['feat_type'] == 'fb':
+    if args.feat_type == 'fb':
         datasetlist = ["fb", "vad"]
         mask = None
-    features_folder = os.getcwd() + '/{}_test_feature'.format(args['feat_type'])
+    features_folder = os.getcwd() + '/{}_test_feature'.format(args.feat_type)
     
     # create feature server for loading feature from disk    
     feature_server = sidekit.FeaturesServer(features_extractor=None,
