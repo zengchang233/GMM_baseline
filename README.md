@@ -63,7 +63,7 @@ Ps：最新版的`sidekit`，也就是`1.3.1`我没有测试过，可能有`bug`
 `preprocess.py`文件主要是特征提取已经路径的读取，具体用法看`run.sh`脚本。
 
 `gmm_ubm.py`这个脚本包含了训练ubm，自适应得到注册人的gmm，以及计算注册的gmm对所有攻击语音的打分的函数。脚本的用法如下。
-测试了512 mixture的GMM分别对于64-dim的fbank和13+delta+double delta的mfcc的拟合，发现mfcc的效果相对较好，但是根据比赛的评分规则，最好也只有0.74。
+测试了512 mixture的GMM分别对于64-dim的fbank和13+delta+double delta的mfcc的拟合，发现mfcc的效果相对较好，但是根据比赛的评分规则，最好也只有0.78。
 ```
 usage: gmm_ubm.py [-h] [--feat_type {mfcc,fb,plp}] [--delta]
                   [--distribNum DISTRIBNUM] [--num_thread NUM_THREAD]
