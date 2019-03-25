@@ -15,11 +15,11 @@ fi
 
 if [ $stage -le 1 ]; then
     echo '-----start extract feature-----'
-    audio_dir='/home/zeng/zeng/aishell/wav'        # change it to your own audio dir.
-    feature_type='mfcc'                            # you can change it to plp.
-    for i in train test; do
-        python preprocess.py $audio_dir $feature_type $i
-    done
+    train_audio_dir='/home/zeng/zeng/aishell/wav'        # change it to your own audio dir.
+    test_audio_dir='/home/zeng/zeng/aishell/af2019-sr-devset-20190312/data'      # change it to your own audio dir
+    feature_type='mfcc'                                  # you can change it to plp.
+    python preprocess.py $train_audio_dir $feature_type train
+    python preprocess.py $test_audio_dir $feature_type test
     echo '-----feature extraction done-----'
 fi
 
