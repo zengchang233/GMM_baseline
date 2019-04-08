@@ -31,6 +31,14 @@
 
 ------------------------
 
+**更新4**
+
+`sidekit`的`frontend`文件夹里面的`io.py`文件，首先导入`librosa`，然后对于`read_wave`函数，注释掉里面的内容，改为下面的内容。
+```
+raw, rate = librosa.load(input_file_name, sr = 16000)
+return raw.astype(numpy.float32), rate, 16
+```
+
 ## 依赖项
 
 ### 软件
