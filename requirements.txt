@@ -4,3 +4,4 @@ scipy
 pandas
 matplotlib
 tqdm
+librosa
