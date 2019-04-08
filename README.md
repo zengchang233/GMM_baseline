@@ -53,6 +53,7 @@ pandas
 matplotlib
 scipy
 tqdm
+librosa
 ```
 
 ### 注意
